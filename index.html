@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Grupo Cegonha — Binder com Proteção | Segurança em Dados</title>
+  <link rel="icon" type="image/png" href="./img/favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Playfair+Display:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    /* ===== RESET E BASE (primeiro código) ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --blue-primary: #2D7A9F;
+      --blue-light: #5DA5C9;
+      --blue-soft: #C8E2F0;
+      --blue-deep: #1C4E6B;
+      --sand-light: #FEFCF9;
+      --sand-warm: #F7F4EF;
+      --gray-soft: #F0F2F5;
+      --ink: #1F2A3A;
+      --ink-soft: #2C3D55;
+      --white: #FFFFFF;
+      --shadow-sm: 0 10px 25px -5px rgba(0, 0, 0, 0.03), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+      --shadow-md: 0 20px 30px -12px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 25px 40px -12px rgba(0, 0, 0, 0.12);
+      --radius-card: 28px;
+      --transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      
+      --rainbow-red: #E85D5D;
+      --rainbow-orange: #F0A35E;
+      --rainbow-yellow: #F7D44A;
+      --rainbow-green: #5FAD56;
+      --rainbow-blue: #4A8FE7;
+      --rainbow-purple: #B185DB;
+      --rainbow-gradient: linear-gradient(135deg, var(--rainbow-red), var(--rainbow-orange), var(--rainbow-yellow), var(--rainbow-green), var(--rainbow-blue), var(--rainbow-purple));
+      
+      /* Novas variáveis para os cards refinados */
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+      --t-fast: 0.15s;
+      --t-base: 0.25s;
+      --t-slow: 0.4s;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--sand-light);
+      color: var(--ink);
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #E9E6E0; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb { background: var(--blue-primary); border-radius: 10px; }
+
+    /* ===== NOVAS ANIMAÇÕES (do segundo código) ===== */
+    @keyframes rainbow-shift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    @keyframes float-soft {
+      0%,100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-9px) scale(1.03); }
+    }
+    @keyframes pulse-dot {
+      0%,100% { opacity:1; transform:scale(1); }
+      50% { opacity:.45; transform:scale(1.35); }
+    }
+    @keyframes shimmer {
+      from { background-position: -200% center; }
+      to { background-position: 200% center; }
+    }
+    @keyframes gradient-border {
+      0% { border-color: var(--blue-300); }
+      50% { border-color: var(--pride-purple); }
+      100% { border-color: var(--blue-300); }
+    }
+    @keyframes rainbowFloat {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    @keyframes floatSoft {
+      0%, 100% { transform: translateY(0px) scale(1); }
+      50% { transform: translateY(-8px) scale(1.02); }
+    }
+    @keyframes pulse {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.2); }
+    }
+
+    /* Pride orb atualizada */
+    .pride-orb {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      width: 64px;
+      height: 64px;
+      border-radius: 100px;
+      background: var(--rainbow-gradient);
+      background-size: 300% 100%;
+      animation: rainbowFloat 6s ease infinite, floatSoft 4s infinite;
+      opacity: 0.65;
+      filter: blur(1.5px);
+      pointer-events: none;
+      z-index: 999;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    }
+    @media (max-width: 768px) {
+      .pride-orb { width: 48px; height: 48px; bottom: 20px; right: 20px; }
+    }
+
+    /* ===== NAVEGAÇÃO (primeiro código) ===== */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 6%;
+      background: rgba(254, 252, 249, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(45, 122, 159, 0.12);
+      transition: var(--transition);
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .nav-logo img {
+      height: 56px;
+      width: 56px;
+      object-fit: cover;
+      border-radius: 50%;
+      background: rgba(45, 122, 159, 0.08);
+    }
+    .nav-logo .logo-fallback {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 56px;
+      width: 56px;
+      background: var(--blue-primary);
+      border-radius: 50%;
+      color: white;
+      font-weight: 800;
+      font-size: 1.5rem;
+      font-family: 'Playfair Display', serif;
+    }
+    .nav-logo span {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--ink);
+    }
+    .nav-logo span em {
+      color: var(--blue-primary);
+      font-style: normal;
+    }
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+    .nav-links a {
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.9rem;
+      color: var(--ink-soft);
+      transition: var(--transition);
+    }
+    .nav-links a:hover {
+      color: var(--blue-primary);
+    }
+    .nav-cta {
+      background: var(--blue-primary);
+      color: white !important;
+      padding: 8px 22px !important;
+      border-radius: 60px;
+      font-weight: 600;
+    }
+    .nav-cta:hover {
+      background: var(--blue-light);
+      color: white !important;
+      transform: translateY(-2px);
+    }
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    .hamburger span {
+      width: 26px;
+      height: 2px;
+      background: var(--ink);
+      border-radius: 2px;
+    }
+
+    /* ===== HERO (primeiro código, inalterado) ===== */
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 100vh;
+      position: relative;
+      overflow: hidden;
+      padding: 0;
+      background: none;
+    }
+    .hero-left {
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-left > img.hero-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      filter: brightness(0.82);
+      display: block;
+    }
+    .hero-left-overlay {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to right, rgba(13,17,23,0) 55%, rgba(13,17,23,0.88) 100%),
+        linear-gradient(to top, rgba(13,17,23,0.75) 0%, transparent 55%);
+    }
+    .hero-content {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 48px 40px;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(45,122,159,0.22);
+      border: 1px solid rgba(45,122,159,0.5);
+      color: #7EC8E3;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 6px 14px;
+      border-radius: 99px;
+      margin-bottom: 20px;
+    }
+    .hero-badge::before {
+      content: '';
+      width: 7px; height: 7px;
+      background: #7EC8E3;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 3.5vw, 3.2rem);
+      font-weight: 900;
+      line-height: 1.1;
+      color: #fff;
+      margin-bottom: 14px;
+    }
+    .hero h1 span {
+      color: #5DA5C9;
+      border-bottom: none;
+    }
+    .hero-sub {
+      font-size: 13px;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.65;
+      max-width: 380px;
+      margin-bottom: 28px;
+    }
+    .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 32px; }
+    .btn { padding: 11px 22px; border-radius: 99px; font-size: 13px; font-weight: 600; text-decoration: none; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 7px; transition: all .2s; }
+    .btn-primary { background: #2D7A9F; color: #fff; }
+    .btn-primary:hover { background: #5DA5C9; transform: translateY(-2px); }
+    .btn-outline { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.3); }
+    .btn-outline:hover { background: rgba(255,255,255,0.18); transform: translateY(-2px); }
+    .hero-stats { display: flex; gap: 0; margin-top: 0; }
+    .stat { padding-right: 32px; }
+    .stat + .stat { padding-left: 32px; border-left: 1px solid rgba(255,255,255,0.1); }
+    .stat-num { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 900; color: #5DA5C9; }
+    .stat-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.4); font-weight: 600; }
+    .hero-right {
+      background: #0A1118;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 40px 0 0 0;
+    }
+    .components-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 28px 32px;
+      margin-bottom: 40px;
+      padding: 0 40px 0 48px;
+    }
+    .comp-item {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(2px);
+      border-radius: 24px;
+      padding: 16px 20px;
+      transition: transform 0.2s, background 0.2s;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .comp-item:hover {
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateY(-3px);
+    }
+    .comp-icon {
+      width: 68px;
+      height: 68px;
+      border-radius: 28px;
+      background: rgba(45, 122, 159, 0.2);
+      border: 1px solid rgba(93, 165, 201, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .comp-icon svg { width: 36px; height: 36px; }
+    .comp-text h4 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #EAF0F5;
+      margin-bottom: 6px;
+      letter-spacing: -0.2px;
+    }
+    .comp-text p {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.55);
+      line-height: 1.45;
+    }
+    .features-bar {
+      background: rgba(0, 0, 0, 0.35);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      width: 100%;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+    }
+    .feat-item {
+      padding: 24px 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      border-right: 1px solid rgba(255, 255, 255, 0.06);
+      transition: background 0.2s;
+    }
+    .feat-item:hover { background: rgba(45, 122, 159, 0.1); }
+    .feat-item:last-child { border-right: none; }
+    .feat-icon-wrap {
+      width: 48px;
+      height: 48px;
+      flex-shrink: 0;
+      border-radius: 60px;
+      background: rgba(45, 122, 159, 0.2);
+      border: 1px solid rgba(93, 165, 201, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .feat-icon-wrap svg { width: 26px; height: 26px; stroke-width: 1.8; }
+    .feat-item h4 {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #DDE6ED;
+      margin-bottom: 5px;
+    }
+    .feat-item p {
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.5);
+      line-height: 1.4;
+    }
+    @media (max-width: 1100px) {
+      .components-grid { padding: 0 28px 0 32px; gap: 20px; }
+      .comp-icon { width: 56px; height: 56px; }
+      .comp-icon svg { width: 30px; height: 30px; }
+      .comp-text h4 { font-size: 1rem; }
+    }
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; grid-template-rows: auto auto; }
+      .hero-left { min-height: 60vh; }
+      .hero-right { padding: 36px 0 0; justify-content: flex-start; }
+      .components-grid { grid-template-columns: 1fr; gap: 18px; padding: 0 24px; margin-bottom: 24px; }
+      .comp-item { padding: 14px 18px; }
+      .features-bar { position: relative; bottom: auto; margin-top: 32px; grid-template-columns: repeat(2, 1fr); }
+      .feat-item { padding: 20px 16px; }
+      .feat-item:nth-child(2) { border-right: none; }
+      .hero-content { padding: 28px 24px; }
+      .hero h1 { font-size: 2rem; max-width: 90%; }
+      .hero-sub { font-size: 12px; max-width: 280px; }
+      .hero-btns { gap: 10px; }
+      .btn { padding: 9px 18px; font-size: 12px; }
+    }
+    @media (max-width: 550px) {
+      .components-grid { padding: 0 16px; gap: 14px; }
+      .comp-item { flex-direction: column; text-align: center; gap: 12px; padding: 20px 12px; }
+      .comp-icon { width: 60px; height: 60px; }
+      .comp-icon svg { width: 32px; height: 32px; }
+      .comp-text h4 { font-size: 1rem; }
+      .comp-text p { font-size: 0.75rem; }
+      .features-bar { grid-template-columns: 1fr; margin-top: 24px; }
+      .feat-item { border-right: none; border-bottom: 1px solid rgba(255, 255, 255, 0.06); padding: 16px; }
+      .feat-item:last-child { border-bottom: none; }
+      .hero-content { padding: 20px 16px; }
+      .hero h1 { font-size: 1.8rem; }
+      .hero-stats { flex-wrap: wrap; gap: 16px; }
+      .stat { padding-right: 0; }
+      .stat + .stat { padding-left: 0; border-left: none; }
+    }
+
+    /* ===== SEÇÕES GERAIS ===== */
+    section {
+      padding: 90px 6%;
+    }
+    .section-tag {
+      display: inline-block;
+      background: rgba(45, 122, 159, 0.08);
+      padding: 5px 14px;
+      border-radius: 99px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--blue-primary);
+      margin-bottom: 18px;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.9rem, 3.8vw, 3rem);
+      font-weight: 800;
+      line-height: 1.2;
+      color: var(--ink);
+      margin-bottom: 20px;
+    }
+    .section-sub {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: #5C6F7E;
+      max-width: 600px;
+    }
+
+    /* ===== DATA SECTION (cards refinados do segundo código) ===== */
+    .data-section {
+      background: linear-gradient(135deg, var(--blue-deep) 0%, var(--ink) 100%);
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+    .data-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(45,122,159,.15) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .data-section .section-title,
+    .data-section .section-sub {
+      color: white;
+    }
+    .data-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 48px;
+    }
+    .data-card {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 28px;
+      padding: 32px 24px;
+      transition: transform 0.25s var(--ease-spring), background 0.25s, border-color 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .data-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--rainbow-gradient);
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+    .data-card:hover {
+      transform: translateY(-6px);
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+    .data-card:hover::after {
+      opacity: 1;
+    }
+    .data-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      font-weight: 900;
+      background: var(--rainbow-gradient);
+      background-size: 250% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: red;
+      margin-bottom: 16px;
+      line-height: 1;
+      animation: shimmer 4s linear infinite;
+    }
+    .data-card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 12px;
+    }
+    .data-card p {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      opacity: 0.9;
+      margin-bottom: 16px;
+    }
+    .data-source {
+      font-size: 0.7rem;
+      opacity: 0.6;
+      margin-top: 16px;
+      border-top: 1px solid rgba(255,255,255,0.2);
+      padding-top: 12px;
+    }
+    .data-quote {
+      background: rgba(0,0,0,0.3);
+      border-left: 4px solid var(--rainbow-yellow);
+      padding: 20px 24px;
+      border-radius: 20px;
+      margin-top: 32px;
+      font-style: italic;
+    }
+    @media (max-width: 900px) {
+      .data-grid { grid-template-columns: 1fr; gap: 24px; }
+    }
+
+    /* ===== TECNOLOGIA (cards refinados) ===== */
+    .tech {
+      background: white;
+    }
+    .tech-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 56px;
+      align-items: center;
+    }
+    .tech-features {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 36px;
+    }
+    .feature-card {
+      display: flex;
+      gap: 20px;
+      background: var(--sand-light);
+      border-radius: 24px;
+      padding: 24px;
+      transition: transform 0.25s var(--ease-spring), border-color 0.25s, box-shadow 0.25s;
+      border: 1px solid rgba(0,0,0,0.02);
+      box-shadow: var(--shadow-sm);
+    }
+    .feature-card:hover {
+      transform: translateX(6px);
+      border-left: 4px solid var(--blue-primary);
+      box-shadow: var(--shadow-md);
+    }
+    .feature-icon {
+      width: 52px;
+      height: 52px;
+      background: rgba(45, 122, 159, 0.12);
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      transition: background 0.15s, transform 0.15s var(--ease-spring);
+    }
+    .feature-card:hover .feature-icon {
+      background: rgba(45,122,159,.18);
+      transform: scale(1.08);
+    }
+    .feature-text h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--ink);
+    }
+    .feature-text p {
+      font-size: 0.85rem;
+      color: #5e6e7c;
+      line-height: 1.5;
+    }
+    .tech-img-main img {
+      width: 100%;
+      border-radius: 28px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* ===== COMO FUNCIONA (cards com barra superior) ===== */
+    .how {
+      background: var(--gray-soft);
+    }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      margin-top: 56px;
+    }
+    .step {
+      background: white;
+      border-radius: var(--radius-card);
+      padding: 36px 28px;
+      position: relative;
+      transition: transform 0.25s var(--ease-spring), box-shadow 0.25s;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid rgba(0,0,0,0.03);
+    }
+    .step::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--blue-400), var(--blue-300));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s var(--ease-out);
+      border-radius: 3px 3px 0 0;
+    }
+    .step:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-md);
+    }
+    .step:hover::before {
+      transform: scaleX(1);
+    }
+    .step-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.5rem;
+      font-weight: 900;
+      color: rgba(45, 122, 159, 0.12);
+      position: absolute;
+      top: 20px;
+      right: 24px;
+    }
+    .step-icon {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+    .step h3 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .step p {
+      color: #5c6e7c;
+      font-size: 0.9rem;
+    }
+    .step-alert {
+      display: inline-block;
+      background: rgba(45, 122, 159, 0.1);
+      border-radius: 99px;
+      padding: 4px 14px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--blue-primary);
+      margin-top: 14px;
+      margin-right: 8px;
+    }
+
+    /* ===== MISSÃO, VISÃO, VALORES ===== */
+    .mvv-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      margin-top: 56px;
+    }
+    .mvv-card {
+      border-radius: 32px;
+      padding: 40px 32px;
+      transition: transform 0.25s var(--ease-spring), box-shadow 0.25s;
+      position: relative;
+      box-shadow: var(--shadow-sm);
+    }
+    .mvv-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-md);
+    }
+    .mvv-card:nth-child(1) { background: var(--blue-deep); color: white; }
+    .mvv-card:nth-child(2) { background: var(--blue-primary); color: white; }
+    .mvv-card:nth-child(3) { background: white; border: 1px solid #e9eef2; }
+    .mvv-deco {
+      font-family: 'Playfair Display';
+      font-size: 6rem;
+      font-weight: 900;
+      opacity: 0.08;
+      position: absolute;
+      bottom: 10px;
+      right: 20px;
+    }
+    .mvv-icon { font-size: 2.2rem; margin-bottom: 16px; display: block; }
+    .mvv-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      opacity: 0.7;
+      margin-bottom: 6px;
+    }
+    .valores-list {
+      list-style: none;
+      margin-top: 12px;
+    }
+    .valores-list li {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+      align-items: center;
+      font-size: 0.88rem;
+    }
+    .valores-list li::before {
+      content: "🌈";
+      font-size: 0.8rem;
+    }
+
+    /* ===== GALERIA (bento-style com hover) ===== */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-top: 56px;
+    }
+    .gallery-item {
+      border-radius: 28px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.25s var(--ease-spring), box-shadow 0.25s;
+      box-shadow: var(--shadow-sm);
+      background: var(--sand-200);
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.55s var(--ease-out), filter 0.3s;
+      filter: saturate(0.92);
+    }
+    .gallery-item:hover {
+      transform: scale(0.98);
+      box-shadow: var(--shadow-md);
+    }
+    .gallery-item:hover img {
+      transform: scale(1.06);
+      filter: saturate(1.1);
+    }
+    .gallery-item:nth-child(1) { grid-column: span 2; grid-row: span 2; aspect-ratio: 1; }
+    .gallery-item:nth-child(2),.gallery-item:nth-child(3),.gallery-item:nth-child(4),.gallery-item:nth-child(5){ aspect-ratio: 4/3; }
+
+    /* ===== SOBRE ===== */
+    .sobre-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 56px;
+      align-items: center;
+    }
+    .sobre-img {
+      border-radius: 36px;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      background-color: #F7F4EF;
+      position: relative;
+    }
+    .sobre-img::after {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: calc(36px + 3px);
+      background: var(--rainbow-gradient);
+      z-index: -1;
+      opacity: 0.4;
+    }
+    .sobre-img img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .highlight-box {
+      background: rgba(93, 165, 201, 0.1);
+      border-radius: 24px;
+      padding: 24px 28px;
+      border-left: 5px solid var(--blue-primary);
+      margin-top: 24px;
+    }
+
+    /* ===== CONTATO ===== */
+    .contato-container {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 48px;
+      margin-top: 56px;
+      align-items: start;
+    }
+    .info-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .info-card {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      background: white;
+      padding: 20px 28px;
+      border-radius: 24px;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.25s var(--ease-spring), box-shadow 0.25s, border-color 0.25s;
+      border: 1px solid rgba(0,0,0,0.03);
+    }
+    .info-card:hover {
+      transform: translateX(5px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--blue-200);
+    }
+    .info-icon {
+      width: 56px;
+      height: 56px;
+      background: rgba(45, 122, 159, 0.1);
+      border-radius: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      transition: background 0.15s, transform 0.15s var(--ease-spring);
+    }
+    .info-card:hover .info-icon {
+      background: rgba(45,122,159,.18);
+      transform: scale(1.07);
+    }
+    .form-card {
+      background: white;
+      border-radius: 32px;
+      padding: 36px 32px;
+      box-shadow: var(--shadow-md);
+    }
+    .form-group {
+      margin-bottom: 24px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 14px 18px;
+      background: var(--sand-light);
+      border: 1px solid #E2E8F0;
+      border-radius: 20px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      transition: border-color var(--t-fast), box-shadow var(--t-fast);
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      outline: none;
+      border-color: var(--blue-primary);
+      box-shadow: 0 0 0 3px rgba(45, 122, 159, 0.15);
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+    .btn-submit {
+      background: var(--blue-primary);
+      border: none;
+      padding: 14px 28px;
+      border-radius: 99px;
+      color: white;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: transform 0.15s var(--ease-spring), box-shadow 0.15s, background 0.15s;
+    }
+    .btn-submit:hover {
+      background: var(--blue-light);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(45,122,159,0.3);
+    }
+
+    /* ===== FOOTER (primeiro código) ===== */
+    footer {
+      background: #1F2A3A;
+      color: #CBD5E1;
+      padding: 60px 6% 32px;
+    }
+    .footer-inner {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 56px;
+      margin-bottom: 48px;
+    }
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .footer-brand img,
+    .footer-brand .footer-logo-fallback {
+      height: 48px;
+      width: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .footer-brand .footer-logo-fallback {
+      background: var(--blue-primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 800;
+      font-size: 1.3rem;
+      font-family: 'Playfair Display', serif;
+    }
+    .footer-brand span {
+      font-family: 'Playfair Display';
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: white;
+    }
+    .footer-brand p {
+      width: 100%;
+      margin-top: 8px;
+      font-size: 0.85rem;
+      opacity: 0.7;
+    }
+    .footer-col h4 {
+      color: white;
+      font-size: 0.85rem;
+      margin-bottom: 20px;
+    }
+    .footer-col ul {
+      list-style: none;
+    }
+    .footer-col li {
+      margin-bottom: 12px;
+    }
+    .footer-col a {
+      color: #A3B3C2;
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: color 0.15s;
+    }
+    .footer-col a:hover {
+      color: var(--blue-soft);
+    }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    /* Transição suave para esconder/mostrar */
+nav {
+  transition: transform 0.25s ease-in-out, padding 0.2s, background 0.2s;
+}
+
+.navbar-hidden {
+  transform: translateY(-100%);
+}
+    .pride-orb {
+  pointer-events: all;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  filter: blur(0px); /* remove o blur pra seta aparecer nítida */
+}
+    .pride-flag {
+      display: flex;
+      gap: 6px;
+    }
+    .pride-flag span {
+      width: 26px;
+      height: 6px;
+      border-radius: 4px;
+    }
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.6s ease, transform 0.65s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+    @media (max-width: 900px) {
+      .tech-inner, .sobre-inner, .contato-container { grid-template-columns: 1fr; }
+      .steps, .mvv-grid, .gallery-grid { grid-template-columns: 1fr; }
+      .footer-inner { grid-template-columns: 1fr; gap: 32px; }
+      .nav-links {
+        position: fixed; top: 0; right: -100%; width: 70%; height: 100vh;
+        background: var(--sand-light); flex-direction: column; justify-content: center;
+        padding: 80px 40px; gap: 32px; transition: 0.3s; box-shadow: -4px 0 20px rgba(0,0,0,0.08);
+      }
+      .nav-links.open { right: 0; }
+      .hamburger { display: flex; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="pride-orb" aria-label="Voltar ao topo">↑</div>
+
+<nav id="navbar">
+  <div class="nav-logo">
+    <img src="./img/logo.png" alt="Grupo Cegonha Logo" onerror="this.style.display='none'" />
+    <div class="logo-fallback" style="display: none;">GC</div>
+    <span>Grupo <em>Cegonha</em></span>
+  </div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#tecnologia">Tecnologia</a></li><li><a href="#como-funciona">Como Funciona</a></li>
+    <li><a href="#dados">Dados</a></li><li><a href="#missao">Missão</a></li>
+    <li><a href="#contato" class="nav-cta">Contato</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+</nav>
+
+<!-- HERO (primeiro código) -->
+<section class="hero" id="home">
+  <div class="hero-left">
+    <img class="hero-photo" src="./img/1.png" alt="Pessoa trans usando binder Cegonha" />
+    <div class="hero-left-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-badge">🕊️ Segurança que salva vidas</div>
+      <h1>Binder com<br/><span>proteção real</span><br/>para quem é real</h1>
+      <p class="hero-sub">O primeiro binder com tecnologia de toque integrada — envie localização ou acione emergência com discrição. Porque viver com liberdade também é viver seguro.</p>
+      <div class="hero-btns">
+        <a href="#tecnologia" class="btn btn-primary">🔵 Conheça a tecnologia</a>
+        <a href="#contato" class="btn btn-outline">Falar com a equipe →</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><div class="stat-num">2X</div><div class="stat-label">Ações de segurança</div></div>
+        <div class="stat"><div class="stat-num" style="font-size:1.1rem;padding-top:5px">1 toque</div><div class="stat-label">Alerta imediato</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="components-grid">
+      <div class="comp-item"><div class="comp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#7EC8E3" stroke-width="1.5"><rect x="5" y="2" width="14" height="20" rx="3"/><line x1="9" y1="7" x2="15" y2="7"/><line x1="9" y1="11" x2="15" y2="11"/></svg></div><div class="comp-text"><h4>Binder ergonômico</h4><p>Conforto, compressão segura e tecido respirável</p></div></div>
+      <div class="comp-item"><div class="comp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#E85D8A" stroke-width="1.5"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3" fill="#E85D8A" stroke="none"/><line x1="12" y1="4" x2="12" y2="2"/><line x1="12" y1="22" x2="12" y2="20"/></svg></div><div class="comp-text"><h4>Botão SOS</h4><p>Toque duplo para acionar emergência imediatamente</p></div></div>
+      <div class="comp-item"><div class="comp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#5FAD56" stroke-width="1.5"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg></div><div class="comp-text"><h4>GPS em tempo real</h4><p>Localização precisa e compartilhamento com contato seguro</p></div></div>
+      <div class="comp-item"><div class="comp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#F0A35E" stroke-width="1.5"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="14" x2="20" y2="14"/><line x1="9" y1="9" x2="9" y2="20"/></svg></div><div class="comp-text"><h4>Chip 4G integrado</h4><p>Conexão independente para envio de alertas em qualquer lugar</p></div></div>
+      <div class="comp-item"><div class="comp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#B185DB" stroke-width="1.5"><rect x="7" y="4" width="10" height="16" rx="2"/><line x1="10" y1="4" x2="10" y2="2"/><line x1="14" y1="4" x2="14" y2="2"/><line x1="7" y1="8" x2="17" y2="8"/></svg></div><div class="comp-text"><h4>Bateria avançada</h4><p>Longa duração e recarga simples para máxima proteção</p></div></div>
+    </div>
+    <div class="features-bar">
+      <div class="feat-item"><div class="feat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="#5DA5C9" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div><h4>Discreto e confiável</h4><p>Tecnologia invisível integrada ao binder</p></div></div>
+      <div class="feat-item"><div class="feat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="#5DA5C9" stroke-width="1.8"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div><div><h4>Privacidade garantida</h4><p>Seus dados e localização sempre protegidos</p></div></div>
+      <div class="feat-item"><div class="feat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="#5DA5C9" stroke-width="1.8"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div><div><h4>Alerta imediato</h4><p>Ação rápida que conecta você a quem pode ajudar</p></div></div>
+      <div class="feat-item"><div class="feat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="#5DA5C9" stroke-width="1.8"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4"/><circle cx="17" cy="17" r="4"/><path d="M15 15l1.5 1.5L19 14"/></svg></div><div><h4>Para todas as pessoas trans</h4><p>Desenvolvido por e para nossa comunidade</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- DATA SECTION (cards refinados) -->
+<section class="data-section" id="dados">
+  <div style="text-align:center;">
+    <!-- Cor alterada para vermelho sólido -->
+    <span class="section-tag" style="background:rgba(255,255,255,0.15); color:#E85D5D;">⚠️ URGÊNCIA</span>
+    <h2 class="section-title">A violência contra a comunidade LGBTQIAP+ no Brasil</h2>
+    <p class="section-sub" style="color:rgba(255,255,255,0.8); margin:0 auto;">Os números abaixo mostram por que a segurança não pode ser um luxo — é uma necessidade urgente.</p>
+  </div>
+  <div class="data-grid">
+    <div class="data-card"><div class="data-number">257</div><h3>Mortes violentas em 2025</h3><p>O Brasil registrou 257 assassinatos de pessoas LGBT+ em 2025. Isso significa uma morte a cada <strong>34 horas</strong>. O país lidera o ranking mundial, à frente do México (40 casos) e EUA (10 casos).</p><div class="data-source">Fonte: Grupo Gay da Bahia / Agência Brasil, 2026</div></div>
+    <div class="data-card"><div class="data-number">+2.500</div><h3>Mortes entre 2008–2021</h3><p>Levantamentos históricos apontam que mais de 2.500 pessoas da comunidade LGBTQIA+ foram assassinadas no Brasil nesse período, uma das maiores taxas do mundo.</p><div class="data-source">Fonte: Dossiê de Mortes e Violência contra LGBTQIAP+</div></div>
+    <div class="data-card"><div class="data-number">80</div><h3>Pessoas trans assassinadas em 2025</h3><p>Travestis e mulheres trans são os grupos mais vulneráveis, representando a maioria das vítimas da violência LGBTfóbica no país.</p><div class="data-source">Fonte: Grupo Gay da Bahia / O Dia, 2026</div></div>
+  </div>
+  <div class="data-quote"><p>“O Brasil é o país que mais mata pessoas LGBTQIAP+ no mundo. E isso não pode ser normal nem aceitável.” — CNN Brasil, 2022</p><p style="margin-top:12px;font-size:0.85rem;">Desde 2019, a LGBTfobia é crime no Brasil com punição de 1 a 3 anos de prisão. Porém, a violência persiste — e a tecnologia pode ser uma aliada na proteção de quem mais precisa.</p></div>
+  <div style="text-align:center; margin-top:32px;"><a href="https://agenciabrasil.ebc.com.br/radioagencia-nacional/direitos-humanos/audio/2026-01/brasil-lidera-ranking-mundial-de-mortes-lgbt" target="_blank" class="btn btn-outline" style="background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.3);color:white;">Ver fonte completa</a></div>
+</section>
+
+<!-- TECNOLOGIA (cards refinados) -->
+<section class="tech" id="tecnologia">
+  <div class="tech-inner">
+    <div><span class="section-tag">⚙️ Inovação com propósito</span><h2 class="section-title">Tecnologia de toque que <span style="color:var(--blue-primary)">protege</span></h2><div class="tech-features"><div class="feature-card reveal"><div class="feature-icon">🗺️</div><div class="feature-text"><h3>1 toque — Localização Segura</h3><p>Pressione uma vez e compartilhe sua localização com um contato de confiança.</p></div></div><div class="feature-card reveal"><div class="feature-icon">🚨</div><div class="feature-text"><h3>2 toques — Emergência</h3><p>Chamada automática para a polícia com dados de localização.</p></div></div><div class="feature-card reveal"><div class="feature-icon">🔋</div><div class="feature-text"><h3>Rastreador invisível</h3><p>Chip integrado ao tecido, bateria duradoura e conectividade contínua.</p></div></div></div></div>
+    <div class="tech-visual reveal"><div class="tech-img-main"><img src="./img/produto.png" alt="Rastreador Binder" /></div></div>
+  </div>
+</section>
+
+<!-- COMO FUNCIONA (cards refinados) -->
+<section class="how" id="como-funciona">
+  <span class="section-tag">📋 3 passos simples</span>
+  <h2 class="section-title">Proteção que cabe no seu dia a dia</h2>
+  <div class="steps">
+    <div class="step reveal"><div class="step-num">01</div><div class="step-icon">📱</div><h3>Cadastre seus contatos</h3><p>Pelo app Cegonha, registre pessoas de confiança e defina preferências de alerta.</p></div>
+    <div class="step reveal"><div class="step-num">02</div><div class="step-icon">👕</div><h3>Vista com liberdade</h3><p>Use o binder normalmente. O sensor é confortável e imperceptível.</p></div>
+    <div class="step reveal"><div class="step-num">03</div><div class="step-icon">⚡</div><h3>Acione quando precisar</h3><p>Toque uma vez → localização. Duas vezes → emergência.</p><div class="step-alert">📍 1× localização</div><div class="step-alert">🚨 2× polícia</div></div>
+  </div>
+</section>
+
+<!-- MISSÃO, VISÃO, VALORES -->
+<section class="mvv" id="missao">
+  <div style="text-align:center"><span class="section-tag">💙 Nossa essência</span><h2 class="section-title">Missão, Visão & Valores</h2></div>
+  <div class="mvv-grid">
+    <div class="mvv-card reveal"><div class="mvv-deco">M</div><span class="mvv-icon">🎯</span><p class="mvv-label">Missão</p><h3>Missão Cegonha</h3><p>Desenvolver moda inclusiva que una conforto, identidade e segurança para pessoas trans, não-binárias e LGBTQIAP+.</p></div>
+    <div class="mvv-card reveal"><div class="mvv-deco">V</div><span class="mvv-icon">🔭</span><p class="mvv-label">Visão</p><h3>Futuro seguro</h3><p>Ser referência em moda com tecnologia protetiva, acessível a todas as pessoas que buscam acolhimento.</p></div>
+    <div class="mvv-card reveal"><div class="mvv-deco">V</div><span class="mvv-icon">🌈</span><p class="mvv-label">Valores</p><h3>Nossos princípios</h3><ul class="valores-list"><li>Inclusão e respeito</li><li>Segurança como direito</li><li>Inovação com propósito</li><li>Empatia com a comunidade</li><li>Acessibilidade</li></ul></div>
+  </div>
+</section>
+
+<!-- GALERIA (bento-style) -->
+<section class="galeria" id="galeria">
+  <span class="section-tag">📸 Galeria de afeto</span><h2 class="section-title">Grupo Cegonha em ação</h2>
+  <div class="gallery-grid">
+    <div class="gallery-item reveal"><img src="./img/1.png" alt="Binder 1" /></div>
+    <div class="gallery-item reveal"><img src="./img/2.png" alt="Binder 2" /></div>
+    <div class="gallery-item reveal"><img src="./img/3.png" alt="Binder 3" /></div>
+    <div class="gallery-item reveal"><img src="./img/4.png" alt="Binder 4"/></div>
+    <div class="gallery-item reveal"><img src="./img/5.png" alt="binder"/></div>
+  </div>
+</section>
+
+<!-- SOBRE -->
+<section class="sobre" id="sobre">
+  <div class="sobre-inner">
+    <div class="sobre-img reveal"><img src="./img/comunidade.png" alt="Bandeira LGBTQIAP+ – Comunidade Grupo Cegonha" /></div>
+    <div><span class="section-tag">💙 Sobre nós</span><h2 class="section-title">Nascemos da comunidade, para a comunidade</h2><p class="reveal"><strong>Grupo Cegonha</strong> surgiu da vivência real de pessoas trans e não-binárias que buscam segurança e autoexpressão. Combinamos design inclusivo à tecnologia de rastreamento.</p><p class="reveal">Participantes do <strong>Empreenda SENAC Aclimação</strong>, criamos moda que é ferramenta de proteção e afirmação de identidade.</p><div class="highlight-box reveal"><p>"Queremos que cada pessoa possa ser quem é — com conforto, estilo e a certeza de que, se precisar, estará protegida."</p></div></div>
+  </div>
+</section>
+
+<!-- CONTATO -->
+<section class="contato" id="contato">
+  <div style="text-align:center;"><span class="section-tag">Fale Conosco</span><h2 class="section-title">Vamos conversar?</h2><p class="section-sub" style="margin:0 auto;">Pré-encomenda, parcerias, imprensa — nossa equipe está pronta para ouvir você.</p></div>
+  <div class="contato-container">
+    <div class="info-cards">
+      <div class="info-card reveal"><div class="info-icon">📧</div><div class="info-text"><h4>E-mail</h4><p>contato@grupocegonha.com.br</p></div></div>
+      <div class="info-card reveal"><div class="info-icon">📱</div><div class="info-text"><h4>WhatsApp</h4><p>+55 (11) 9 0000-0000</p></div></div>
+      <div class="info-card reveal"><div class="info-icon">📍</div><div class="info-text"><h4>Localização</h4><p>São Paulo, SP — SENAC Aclimação</p></div></div>
+      <div class="info-card reveal"><div class="info-icon">🎓</div><div class="info-text"><h4>Programa</h4><p>Empreendedorismo e Inovação SENAC</p></div></div>
+    </div>
+    <div class="form-card reveal">
+      <form onsubmit="handleForm(event)">
+        <div class="form-row"><div class="form-group"><label>Nome completo</label><input type="text" required placeholder="Seu nome" /></div><div class="form-group"><label>E-mail</label><input type="email" required placeholder="seu@email.com" /></div></div>
+        <div class="form-group"><label>Assunto</label><select><option>Quero comprar o produto</option><option>Parceria comercial</option><option>Imprensa / Mídia</option><option>Dúvidas sobre a tecnologia</option><option>Outro</option></select></div>
+        <div class="form-group"><label>Mensagem</label><textarea rows="4" placeholder="Escreva sua mensagem..."></textarea></div>
+        <button type="submit" class="btn-submit">Enviar mensagem →</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER (primeiro código) -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <img src="./img/logo.png" alt="Logo" onerror="this.style.display='none'" />
+      <div class="footer-logo-fallback" style="display:none;">GC</div>
+      <span>Grupo <em>Cegonha</em></span>
+      <p>Binder com tecnologia que protege e acolhe. Para todes.</p>
+    </div>
+    <div class="footer-col"><h4>Links</h4><ul><li><a href="#tecnologia">Tecnologia</a></li><li><a href="#como-funciona">Funcionamento</a></li><li><a href="#dados">Dados</a></li><li><a href="#missao">Missão</a></li></ul></div>
+    <div class="footer-col"><h4>Redes</h4><ul><li><a href="#">Instagram</a></li><li><a href="#">LinkedIn</a></li><li><a href="mailto:contato@grupocegonha.com.br">E-mail</a></li></ul></div>
+  </div>
+  <div class="footer-bottom"><p>© 2025 Grupo Cegonha — Todos os direitos reservados.</p><div class="pride-flag"><span style="background:#E85D5D"></span><span style="background:#F0A35E"></span><span style="background:#F7D44A"></span><span style="background:#5FAD56"></span><span style="background:#4A8FE7"></span><span style="background:#B185DB"></span></div><p class="presentation-tag">Site para apresentação — Empreenda SENAC Aclimação</p></div>
+</footer>
+
+<script>
+  document.querySelectorAll('.nav-logo img, .footer-brand img').forEach(img => {
+    img.onerror = function() { this.style.display = 'none'; let parent = this.parentElement; let fb = parent.querySelector('.logo-fallback, .footer-logo-fallback'); if(fb) fb.style.display = 'flex'; };
+  });
+  const navImg = document.querySelector('.nav-logo img');
+  if(navImg && navImg.naturalWidth === 0) { navImg.style.display = 'none'; document.querySelector('.nav-logo .logo-fallback').style.display = 'flex'; }
+  const footerImg = document.querySelector('.footer-brand img');
+  if(footerImg && footerImg.naturalWidth === 0) { footerImg.style.display = 'none'; document.querySelector('.footer-brand .footer-logo-fallback').style.display = 'inline-flex'; }
+
+  const hamburger = document.getElementById('hamburger'), navLinks = document.getElementById('navLinks');
+  hamburger.addEventListener('click', () => navLinks.classList.toggle('open'));
+  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => { entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } }); }, { threshold: 0.12 });
+  reveals.forEach(el => observer.observe(el));
+
+  window.addEventListener('scroll', () => { document.getElementById('navbar').style.padding = window.scrollY > 60 ? '14px 6%' : '20px 6%'; });
+  function handleForm(e) { e.preventDefault(); const btn = e.target.querySelector('.btn-submit'); btn.textContent = '✓ Mensagem enviada!'; btn.style.background = '#2C6E8F'; setTimeout(() => { btn.innerHTML = 'Enviar mensagem →'; btn.style.background = ''; e.target.reset(); }, 3000); }
+
+  document.querySelector('.pride-orb').addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// Controle de visibilidade da navbar
+let lastScrollY = window.scrollY;
+const navbar = document.getElementById('navbar');
+const scrollThreshold = 5; // evita pequenos movimentos
+
+window.addEventListener('scroll', () => {
+  const currentScrollY = window.scrollY;
+  
+  // Se estiver no topo, garante que a navbar apareça
+  if (currentScrollY <= 0) {
+    navbar.classList.remove('navbar-hidden');
+    return;
+  }
+  
+  // Esconde ao descer, mostra ao subir
+  if (currentScrollY > lastScrollY && currentScrollY > scrollThreshold) {
+    // Rolando para baixo: esconde navbar
+    navbar.classList.add('navbar-hidden');
+  } else if (currentScrollY < lastScrollY) {
+    // Rolando para cima: mostra navbar
+    navbar.classList.remove('navbar-hidden');
+  }
+  
+  lastScrollY = currentScrollY;
+});
+</script>
+</body>
+</html>
